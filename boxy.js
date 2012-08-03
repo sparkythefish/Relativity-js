@@ -1,7 +1,8 @@
 goog.provide('b');
 
 b.vector = function (x,y) {
-  return new box2d.Vec2(x,y);
+  var vec = new box2d.Vec2(x,y);
+  return vec; 
 };
 
 b.circle = function (radius, density, pos, bits) {
@@ -23,6 +24,9 @@ b.circle = function (radius, density, pos, bits) {
   physical.density = density;
 
   return physical;
-
 }
 
+//b.mul = function (vector, multiplier) {
+//  var vec = b.vector(vector.x*multiplier,vector.y*multiplier);
+//  return vec;
+//}

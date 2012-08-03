@@ -1,19 +1,15 @@
 goog.provide("level");
 
-level.planets = [];
-level.start;
+function Level (levelDef) {
 
-level.build = function(levelDef){
+  this.planets = [];
+
   for (i in levelDef.planets) {
     var p = new Planet(levelDef.planets[i]);
     c.l("planet: " + p.physical);
 
-    level.planets.push(p);
+    this.planets.push(p);
   }
 
-  level.player = levelDef.player;
-
-  return level;
+  this.player = levelDef.player;
 }
-
-

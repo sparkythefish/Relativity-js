@@ -26,30 +26,32 @@ function Player (playerDef) {
   //physics.planetLayer.appendChild(limeCircle);
   //physics.gamescene.appendChild(limeCircleExpander);
 
-  var maxPower = 3000;
+  this.maxPower = 3000;
 
   this.visible = playerLayer;
   this.physical = 
     b.circle(limeCircle.getSize().width/2, 1, pos);
-
-  this.applyForce = function(planet, distance, playerPos, planetPos) {
-    var maxDist = planet.getGravityDistance();
-    var distRatio = 0;
-    c.c("dist: " + distance + " maxDist: " + maxDist);
-    if (distance <= maxDist) {
-      distRatio = maxDist / (maxDist + distance); 
-      c.c(" distRatio: " + distRatio);
-
-      var ang = m.angle(planetPos,playerPos);
-      var radiusWeight = planet.getGravityWeight();
-      var intensity = engine.maxPower * distRatio * radiusWeight;
-      c.c("ang: " + ang + " radW: " + radiusWeight + " int: " + intensity);
-      var dir = b.vector(intensity * Math.cos(ang),
-                         intensity * Math.sin(ang));
-      //c.d("angle: " + ang + " cPos: " + cPos + " pPos: " + pPos);
-      //c.d("dir.x: " + dir.x + " dir.y: " + dir.y);
-
-      this.physical.ApplyForce(dir, planetPos);
-    }
-  };
 }
+
+
+Player.prototype.applyForce = function(planet, distance, playerPos, planetPos) {
+  var maxDist = planet.getGravityDistance();
+  var distRatio = 0;
+  c.c("dist: " + distance + " maxDist: " + maxDist);
+  if (distance <= maxDist) {
+    distRatio = maxDist / (maxDist + distance); 
+    c.c(" distRatio: " + distRatio);
+
+    var ang = m.angle(planetPos,playerPos);
+    var radiusWeight = planet.getGravityWeight();
+    var intensity = this.maxPower * distRatio * radiusWeight;
+    c.c("ang: " + ang + " radW: " + radiusWeight + " int: " + intensity);
+    var dir = b.vector(intensity * Math.cos(ang),
+                       intensity * Math.sin(ang));
+    //c.d("angle: " + ang + " cPos: " + cPos + " pPos: " + pPos);
+    //c.d("dir.x: " + dir.x + " dir.y: " + dir.y);
+
+    this.physical.ApplyForce(dir, planetPos);
+  }
+}
+
