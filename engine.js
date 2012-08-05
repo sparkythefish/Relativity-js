@@ -17,6 +17,7 @@ engine.tick = function (dt, player, level) {
 
       player.applyForce(planet, distance, cPos, pPos);
       var cameraPos = planet.getCameraPosition(distance);
+
       sum.add(cameraPos);
       divisor += planet.time;
 
@@ -31,15 +32,18 @@ engine.tick = function (dt, player, level) {
     // (10 * 3) + (5 * 1) / 2 (number of objects) = 17.5! which is not between 10 and 5.
     // What to do:
     // (10 * 3) + (5 * 1) / 4 (number of multipliers) = 35/4 = 8.75, which is what we want.
-    var avgPlanet = sum.scale(1/divisor);
-    sum = b.vector(cPos.x, cPos.y).add(avgPlanet);
-    var avg = sum.scale(1/2);
+    var playerPos = b.vector(cPos.x, cPos.y);//physics.pos(cPos);
+    sum = sum.add(playerPos);
+    var avgPlanet = sum.scale(1/(divisor));
+    //sum = playerPos.add(avgPlanet);
+    //var avg = divisor > 1 ? sum.scale(1/2) : sum;
 
-    c.d("avg: " + avg + " sum: " + sum + " divisor: " + divisor);
-    if (!debug.avg) {
-      debug.avg = new Planet({'pos':[avg.x, avg.y], 'radius':20});
-    }
-    debug.avg.visible.setPosition(avg);
+    //c.d("avg: " + avg + " sum: " + sum + " divisor: " + divisor);
+    c.d(" sum: " + sum + " divisor: " + divisor);
+    //if (!debug.avg) {
+    //  debug.avg = new Planet({'pos':[avg.x, avg.y], 'radius':20});
+    //}
+    //debug.avg.visible.setPosition(avg);
     if (!debug.avgPlanet) {
       debug.avgPlanet = new Planet({'pos':[avgPlanet.x, avgPlanet.y], 'radius':10});
     }

@@ -44,13 +44,22 @@ Planet.prototype.getCameraPosition = function (distance) {
   if (distance < this.getGravityDistance()) {
     this.time += 0.1;
   } else if (this.time > 0) {
-    this.time -= 0.1;
+    this.time *= 0.9; // easing number, how fast we remove the old planet
+    this.time -= 0.1; // rounding to be < 0 is a small decimal to, else divide forever.
   }
 
-  var pPos = this.physical.GetCenterPosition().clone(); 
-  pPos = pPos.scale(this.time);
-  c.c("cam pos: " + pPos + " time: " + this.time);
+  var cameraPos;
+  if (this.time > 0) {
+    var pPos = this.physical.GetCenterPosition().clone(); 
+    cameraPos = pPos.scale(this.time);
+    c.c("cam pos: " + cameraPos + " time: " + this.time);
+    carmeraPos = physics.pos(cameraPos);
+  } else {
+    this.time = 0; // make sure its 0
+    cameraPos = b.vector(0,0);
+  }
+
+  return cameraPos;
 
 
-  return physics.pos(pPos);
 }

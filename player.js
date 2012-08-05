@@ -28,6 +28,8 @@ function Player (playerDef) {
 
   this.maxPower = 3000;
 
+  this.movePower = 100;
+
   this.visible = playerLayer;
   this.physical = 
     b.circle(limeCircle.getSize().width/2, 1, pos);
@@ -55,3 +57,22 @@ Player.prototype.applyForce = function(planet, distance, playerPos, planetPos) {
   }
 }
 
+Player.prototype.moveUp = function () {
+  this.move(b.vector(0,-this.movePower));
+}
+
+Player.prototype.moveLeft = function () {
+  this.move(b.vector(-this.movePower,0));
+}
+
+Player.prototype.moveRight = function () {
+  this.move(b.vector(this.movePower,0));
+}
+
+Player.prototype.moveDown = function () {
+  this.move(b.vector(0,this.movePower));
+}
+
+Player.prototype.move = function (dir) {
+  this.physical.SetLinearVelocity(dir);
+}

@@ -64,10 +64,16 @@ physics.start = function() {
 
   goog.events.listen(document, ['keydown'], function(e) { 
     if (e.keyCode == goog.events.KeyCodes.LEFT) { 
-      player.moveLeft = true; 
+      player.moveLeft(); 
     } 
     if (e.keyCode == goog.events.KeyCodes.UP) { 
-      player.moveUp = true; 
+      player.moveUp(); 
+    } 
+    if (e.keyCode == goog.events.KeyCodes.RIGHT) { 
+      player.moveRight(); 
+    } 
+    if (e.keyCode == goog.events.KeyCodes.DOWN) { 
+      player.moveDown(); 
     } 
   }); 
 };
