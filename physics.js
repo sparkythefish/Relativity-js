@@ -28,8 +28,7 @@ physics.start = function() {
   var physicsDOM = document.getElementById("physicsDOM");
   physics.WIDTH = window.innerWidth; 
   physics.HEIGHT = window.innerHeight; 
-  physics.CENTER = new box2d.Vec2(physics.WIDTH/2, physics.HEIGHT/2); 
-  c.l(physics.CENTER);
+  physics.CENTER = b.vector(physics.WIDTH/2, physics.HEIGHT/2); 
 
   //director
   //physics.director = new lime.Director(physicsDOM, physics.WIDTH, physics.HEIGHT);
@@ -48,10 +47,11 @@ physics.start = function() {
   // set active scene
   physics.director.replaceScene(gamescene);
 
-  var gravity = new box2d.Vec2(0, 0);
+  var gravity = b.vector(0, 0);
   var bounds = new box2d.AABB();
-  bounds.minVertex.Set(-physics.WIDTH, -physics.HEIGHT);
-  bounds.maxVertex.Set(2*physics.WIDTH,2*physics.HEIGHT);
+  var boundSize = 10;
+  bounds.minVertex.Set(-boundSize*physics.WIDTH, -boundSize*physics.HEIGHT);
+  bounds.maxVertex.Set(2*boundSize*physics.WIDTH, 2*boundSize*physics.HEIGHT);
   var world = new box2d.World(bounds, gravity, false);
   physics.world = world;
 

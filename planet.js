@@ -4,21 +4,14 @@ function Planet (planetDef) {
   var size = planetDef.radius *2;
   var posVec = b.vector(planetDef.pos[0], planetDef.pos[1])
   var pos = physics.pos(posVec);
-  // limeCircle, for visual display
-  var limeCircle = (new lime.Circle)
-      .setFill(new lime.fill.LinearGradient()
-      .addColorStop(0.49,200,0,0)
-      .addColorStop(.5,0,0,250))
-      .setPosition(pos)
-      .setSize(size, size);
-  physics.planetLayer.appendChild(limeCircle);
 
-  this.visible = limeCircle;
+  var visualLayer = l.circle(size);
+  visualLayer.setPosition(pos); 
+  physics.planetLayer.appendChild(visualLayer);
+  this.visible = visualLayer;
 
-  // TODO: I put planets in a non-coliison categoryBit as the player.
-  // This prevnts the player form colliding, while I play with the physics
   this.physical =
-    b.circle(limeCircle.getSize().width/2, 0, pos, 1);
+    b.circle(size/2, 0, pos);
 
   this._gravityDistance = 0;
   this._gravityWeight = 0;
@@ -39,17 +32,22 @@ Planet.prototype.getGravityWeight = function () {
   return this._gravityWeight;
 }
 
-
 Planet.prototype.getCameraPosition = function (distance) {
   if (distance < this.getGravityDistance()) {
-    this.time += 0.1;
+    if (this.time < 10) {
+      // TODO: Forever fiddle with this
+      this.time += 0.01;
+      this.time *= 1.2;
+      // this one works OK:
+      //this.time += 0.08;
+    }
   } else if (this.time > 0) {
-    this.time *= 0.9; // easing number, how fast we remove the old planet
-    this.time -= 0.1; // rounding to be < 0 is a small decimal to, else divide forever.
+    this.time *= 0.95; // easing number, how fast we remove the old planet
+    //this.time -= 0.1; // rounding to be < 0 is a small decimal to, else divide forever.
   }
 
   var cameraPos;
-  if (this.time > 0) {
+  if (this.time > 0.005) {
     var pPos = this.physical.GetCenterPosition().clone(); 
     cameraPos = pPos.scale(this.time);
     c.c("cam pos: " + cameraPos + " time: " + this.time);
@@ -60,6 +58,4 @@ Planet.prototype.getCameraPosition = function (distance) {
   }
 
   return cameraPos;
-
-
 }

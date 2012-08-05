@@ -14,7 +14,11 @@ b.circle = function (radius, density, pos, bits) {
   var b2Circle = new box2d.CircleDef;
   b2Circle.radius = radius
   b2Circle.density = density;
-  b2Circle.categoryBits = bits;
+  // TODO: I put planets in a non-coliison categoryBit as the player.
+  // This prevnts the player form colliding, while I play with the physics
+  //
+  // * Comment out this line to enable collisions and remove 'bits'
+  //b2Circle.categoryBits = bits;
 
   cbodyDef.AddShape(b2Circle);
 

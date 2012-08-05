@@ -6,35 +6,17 @@ function Player (playerDef) {
   var start = b.vector(playerDef.start[0], playerDef.start[1]);
   var pos = physics.pos(start);
 
-  var playerLayer = new lime.Layer;
+  var playerLayer = l.circle(radius);
   physics.planetLayer.appendChild(playerLayer);
-
-  // limeCircle, for visual display
-  var limeCircle = (new lime.Circle)
-      .setStroke(new lime.fill.Stroke())
-      .setFill(0,0,0,.5)
-      .setSize(radius, radius);
-  playerLayer.appendChild(limeCircle);
-  //physics.planetLayer.appendChild(limeCircle);
-  //physics.gamescene.appendChild(limeCircle);
-
-  var limeCircleExpander = (new lime.Circle)
-      //.setStroke(new lime.fill.Stroke())
-      //.setFill(0,0,0,.5)
-      .setSize(radius+20, radius+20);
-  playerLayer.appendChild(limeCircleExpander);
-  //physics.planetLayer.appendChild(limeCircle);
-  //physics.gamescene.appendChild(limeCircleExpander);
 
   this.maxPower = 3000;
 
-  this.movePower = 100;
+  this.movePower = 200;
 
   this.visible = playerLayer;
   this.physical = 
-    b.circle(limeCircle.getSize().width/2, 1, pos);
+    b.circle(radius/2, 1, pos);
 }
-
 
 Player.prototype.applyForce = function(planet, distance, playerPos, planetPos) {
   var maxDist = planet.getGravityDistance();
