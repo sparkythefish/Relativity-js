@@ -11,7 +11,7 @@ function Planet (planetDef) {
   this.visible = visualLayer;
 
   this.physical =
-    b.circle(size/2, 0, pos);
+    b.circle(size/2, 0, pos, 2, 4);
 
   this._gravityDistance = 0;
   this._gravityWeight = 0;

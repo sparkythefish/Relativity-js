@@ -15,7 +15,7 @@ function Player (playerDef) {
 
   this.visible = playerLayer;
   this.physical = 
-    b.circle(radius/2, 1, pos);
+    b.circle(radius/2, 1, pos, 4, 2);
 }
 
 Player.prototype.applyForce = function(planet, distance, playerPos, planetPos) {
@@ -56,5 +56,8 @@ Player.prototype.moveDown = function () {
 }
 
 Player.prototype.move = function (dir) {
+  //this.physical.UnFreeze();
+  //this.physical.WakeUp();
+  physics.frozen = false;
   this.physical.SetLinearVelocity(dir);
 }

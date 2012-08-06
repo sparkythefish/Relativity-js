@@ -39,6 +39,9 @@ physics.start = function() {
 
   var layer = new lime.Layer;
   layer.setPosition(0, 0);
+  // TODO: this can kinda look cool
+  //layer.setQuality(.1);
+  //layer.setQuality(.7);
   gamescene.appendChild(layer);
 
   physics.gamescene = gamescene;
@@ -46,6 +49,9 @@ physics.start = function() {
 
   // set active scene
   physics.director.replaceScene(gamescene);
+
+  physics.contact = false;
+  physics.contactCount = 0;
 
   var gravity = b.vector(0, 0);
   var bounds = new box2d.AABB();
@@ -57,9 +63,31 @@ physics.start = function() {
 
   level = new Level(levels.level01);
   player = new Player(level.player); 
+  engine = new Engine();
+  
+  physics.frozen = false;
 
   lime.scheduleManager.schedule(function(dt) {
-    engine.tick(dt, player, level);
+    if (!physics.frozen) {
+      engine.tick(dt, player, level);
+    }
+    //if (physics.contactCount < physics.world.m_contactCount) {
+    //  physics.contact = true;
+    //  //physics.frozen = true;
+    //  //physics.contactCount = physics.world.m_contactCount;
+    //  physics.contactCount++; 
+    //  c.l("contact!!");
+    //} else {
+    //  physics.contact = false;
+    //}
+    var contact = physics.world.GetContactList();
+    if(contact) { 
+      //var circle1 = contact.GetShape1().GetBody();
+      //var circle2 = contact.GetShape2().GetBody();
+      if (contact.postFinished) {
+        c.l("colliding!!!");
+      }
+    }
   },this);
 
   goog.events.listen(document, ['keydown'], function(e) { 
@@ -76,6 +104,7 @@ physics.start = function() {
       player.moveDown(); 
     } 
   }); 
+
 };
 
 physics.pos = function (position) {

@@ -2,7 +2,12 @@ goog.provide('engine');
 
 debug = {}
 
-engine.tick = function (dt, player, level) {
+function Engine() {
+  this.totalFps = 0;
+  this.totalTicks = 1;
+}
+
+Engine.prototype.tick = function (dt, player, level) {
 
   var cPos = player.physical.GetCenterPosition().clone();
 
@@ -28,9 +33,19 @@ engine.tick = function (dt, player, level) {
     }
   }
 
+  engine.updateCamera(sum, divisor, cPos, closestDistance);
+  // Map the physical to visible world P
+  player.visible.setPosition(cPos);
+  // TODO: fiddle with this forever
+  //physics.world.Step(dt / 1000, 3);
+  physics.world.Step(dt / 1000, 1000);
+}
+
+
+Engine.prototype.updateCamera = function (sum, divisor, playerPos, closestDistance) {
   var avgPlanet = sum.scale(1/(divisor));
   // TODO: this is good for debugging, but can be eliminated for performance
-  var tempCpy = b.vector(avgPlanet.x, avgPlanet.y).add(b.vector(cPos.x, cPos.y));
+  var tempCpy = b.vector(avgPlanet.x, avgPlanet.y).add(b.vector(playerPos.x, playerPos.y));
   var cameraAvg = tempCpy.scale(.5);
    
   if (!debug.avgPlanet) {
@@ -43,17 +58,22 @@ engine.tick = function (dt, player, level) {
   }
   debug.avg.visible.setPosition(cameraAvg);
   
-  // Map the physical to visible world P
-  player.visible.setPosition(cPos);
-  physics.world.Step(dt / 1000, 3);
+  var fps = physics.director.fps;
+  if (!this.totalFps) {
+    this.totalFps = fps;
+  } else {
+    this.totalFps += fps; 
+  }
+  this.totalTicks++;
 
-  var cameraScale = (physics.CENTER.y) / (closestDistance); 
-//  cameraScale = 1.3;
-  c.d("sum: " + sum + " divisor: " + divisor + " closestD: " + closestDistance + " cameraScale: " + cameraScale);
+  var avgFps = this.totalFps / this.totalTicks;
+
+  var cameraScale = (physics.CENTER.y * 1.1) / (closestDistance); 
+  c.d("avg fps:" + avgFps + " sum: " + sum + " divisor: " + divisor + " closestD: " + closestDistance + " cameraScale: " + cameraScale);
   physics.planetLayer.setScale(cameraScale);
 
   var prevLayerPos = physics.planetLayer.getPosition();
   var cameraPoint = cameraAvg;
   physics.planetLayer.setPosition(-((cameraPoint.x * cameraScale) - (physics.CENTER.x)), 
-                                  -((cameraPoint.y * cameraScale) - (physics.CENTER.y)));
+                                   -((cameraPoint.y * cameraScale) - (physics.CENTER.y)));
 }

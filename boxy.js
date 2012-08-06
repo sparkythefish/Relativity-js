@@ -5,20 +5,18 @@ b.vector = function (x,y) {
   return vec; 
 };
 
-b.circle = function (radius, density, pos, bits) {
+b.circle = function (radius, density, pos, category, mask) {
 
   var cbodyDef = new box2d.BodyDef;
   cbodyDef.position.Set(pos.x, pos.y);
 
   // b2Circle, for physical interaction
   var b2Circle = new box2d.CircleDef;
-  b2Circle.radius = radius
+  b2Circle.radius = radius;
+  b2Circle.friction = 100;
   b2Circle.density = density;
-  // TODO: I put planets in a non-coliison categoryBit as the player.
-  // This prevnts the player form colliding, while I play with the physics
-  //
-  // * Comment out this line to enable collisions and remove 'bits'
-  //b2Circle.categoryBits = bits;
+  b2Circle.categoryBits = category;
+  b2Circle.maskBits = mask;
 
   cbodyDef.AddShape(b2Circle);
 
@@ -30,7 +28,8 @@ b.circle = function (radius, density, pos, bits) {
   return physical;
 }
 
-//b.mul = function (vector, multiplier) {
-//  var vec = b.vector(vector.x*multiplier,vector.y*multiplier);
-//  return vec;
-//}
+box2d.Body.prototype.UnFreeze = function() {
+  this.m_flags &= ~box2d.Body.Flags.frozenFlag;
+};
+
+
