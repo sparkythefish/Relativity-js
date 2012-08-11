@@ -4,7 +4,7 @@ levels.level01 =
   {
     "height":1000,
     "width":1000,
-    "player": { "start":[400,-100] },
+    "player": { "start":[500,-100] },
     "planets":
       [
         {"pos":[700,0], "radius":75}, 

@@ -17,6 +17,7 @@ function Planet (planetDef) {
   this._gravityWeight = 0;
   this.time = 0;
   this.zoom = false;
+  this.zoomPos = pos;
 }
 
 Planet.prototype.getGravityDistance = function () {
@@ -42,6 +43,7 @@ Planet.prototype.getCameraPosition = function (distance, playerPos) {
     dbg = "1: " + pPos.toString();
     pPos = m.point(pPos, m.angle(pPos,playerPos), distance - (zoomDistanceThresh));  
     this.zoom = true;
+    this.zoomPos = b.vector(pPos.x, pPos.y);
   }
   
   if (distance < this.getGravityDistance()) {
@@ -63,7 +65,6 @@ Planet.prototype.getCameraPosition = function (distance, playerPos) {
 
   var cameraPos;
   if (this.time > 0.005) {
-    if (this.zoom) c.c("planet.pos: " + pPos + " scaler: " + this.time);
     cameraPos = pPos.scale(this.time);
   } else {
     this.time = 0; // make sure its 0

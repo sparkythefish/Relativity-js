@@ -14,6 +14,7 @@ Engine.prototype.tick = function (dt, player, level) {
   var sum = b.vector(cPos.x, cPos.y);
   var divisor = 1; // 1 for the initial player position
   var closestDistance = -1;
+  var closestPos = b.vector(0,0);
   var zoom = false;
 
   for (x in level.planets) {
@@ -31,14 +32,17 @@ Engine.prototype.tick = function (dt, player, level) {
 
     if (!zoom && planet.zoom) {
       zoom = true;
+      c.c("pPos: " + pPos + " planet.zoomPos: " + planet.zoomPos);
+      distance = m.dist(cPos, planet.zoomPos);
     }
 
     if (distance < closestDistance || closestDistance == -1) {
       closestDistance = distance;
+      closestPos = pPos;
     }
   }
 
-  var scale = engine.updateCamera(sum, divisor, cPos, closestDistance, zoom);
+  var scale = engine.updateCamera(sum, divisor, cPos, closestDistance, zoom, closestPos);
   // Map the physical to visible world P
   player.visible.setPosition(cPos);
   // TODO: fiddle with this forever
@@ -53,21 +57,23 @@ Engine.prototype.tick = function (dt, player, level) {
   physics.world.Step(dt / (timeShiftBase + timeShift), 1);
 }
 
-
-Engine.prototype.updateCamera = function (sum, divisor, playerPos, closestDistance, zoom) {
+Engine.prototype.updateCamera = function (sum, divisor, playerPos, closestDistance, zoom, closestPos) {
   var avgPlanet = sum.scale(1/(divisor));
   // TODO: this is good for debugging, but can be eliminated for performance
   var tempCpy = b.vector(avgPlanet.x, avgPlanet.y).add(b.vector(playerPos.x, playerPos.y));
   var cameraAvg = tempCpy.scale(.5);
 
-  if (zoom) {
-    c.c("engine.avgPlanet: " + avgPlanet + " divisor: " + divisor);
-    var zoomDistance = m.dist(avgPlanet, playerPos);
-    var maxZoom = 2;
-    dbg = "1: " + closestDistance.toString();
-    closestDistance = zoomDistance > maxZoom ? zoomDistance : maxZoom;
-    c.c(dbg + " 2: " + closestDistance);
-  }
+  c.d("zoom: " + zoom + " closest: " + closestDistance);
+
+//  if (zoom) {
+//    var diffToClosest = m.dist(closestPos, avgPlanet);
+//    var zoomDistance = m.dist(avgPlanet, playerPos);
+//    var maxZoom = 2;
+//    //dbg = "1: " + closestDistance.toString();
+//    closestDistance = zoomDistance > maxZoom ? zoomDistance : maxZoom;
+//    //c.c(dbg + " 2: " + closestDistance.toString());
+//  }
+
   
   if (!debug.avgPlanet) {
     debug.avgPlanet = new Planet({'pos':[avgPlanet.x, avgPlanet.y], 'radius':5});
@@ -96,7 +102,6 @@ Engine.prototype.updateCamera = function (sum, divisor, playerPos, closestDistan
   if (Math.abs(playerVelocity.x) + Math.abs(playerVelocity.y) > 100) {
     playerVelocity.scale(.8);
   }
-  c.d("velocity: " + playerVelocity);
 
   physics.planetLayer.setScale(cameraScale);
 

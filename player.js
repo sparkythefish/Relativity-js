@@ -53,5 +53,5 @@ Player.prototype.moveDown = function () {
 
 Player.prototype.move = function (dir) {
   physics.frozen = false;
-  this.physical.ApplyForce(dir);
+  this.physical.ApplyForce(dir, b.vector(0,0));
 }
