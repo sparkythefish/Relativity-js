@@ -16,6 +16,7 @@ function Planet (planetDef) {
   this._gravityDistance = 0;
   this._gravityWeight = 0;
   this.time = 0;
+  this.zoom = false;
 }
 
 Planet.prototype.getGravityDistance = function () {
@@ -32,7 +33,17 @@ Planet.prototype.getGravityWeight = function () {
   return this._gravityWeight;
 }
 
-Planet.prototype.getCameraPosition = function (distance) {
+Planet.prototype.getCameraPosition = function (distance, playerPos) {
+
+  var pPos = this.physical.GetCenterPosition().clone(); 
+  this.zoom = false;
+  var zoomDistanceThresh = this.physical.radius * 2;
+  if (distance < zoomDistanceThresh) {
+    dbg = "1: " + pPos.toString();
+    pPos = m.point(pPos, m.angle(pPos,playerPos), distance - (zoomDistanceThresh));  
+    this.zoom = true;
+  }
+  
   if (distance < this.getGravityDistance()) {
     if (this.time < 10) {
       // TODO: Forever fiddle with this
@@ -46,12 +57,14 @@ Planet.prototype.getCameraPosition = function (distance) {
     //this.time -= 0.1; // rounding to be < 0 is a small decimal to, else divide forever.
   }
 
+  if (this.zoom) {
+    //c.c(dbg + " 2: " + pPos + " time: " + this.time);
+  }
+
   var cameraPos;
   if (this.time > 0.005) {
-    var pPos = this.physical.GetCenterPosition().clone(); 
+    if (this.zoom) c.c("planet.pos: " + pPos + " scaler: " + this.time);
     cameraPos = pPos.scale(this.time);
-    c.c("cam pos: " + cameraPos + " time: " + this.time);
-    carmeraPos = physics.pos(cameraPos);
   } else {
     this.time = 0; // make sure its 0
     cameraPos = b.vector(0,0);

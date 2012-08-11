@@ -14,7 +14,7 @@ c.d = function (msg) {
   display.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + msg;
 };
 
-c.count = 10;
+c.count = 50;
 
 c.c = function (msg) {
   if (c.count > 0) {

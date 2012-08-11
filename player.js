@@ -2,7 +2,7 @@ goog.provide('player');
 
 function Player (playerDef) {
 
-  var radius = 50;
+  var radius = 2;
   var start = b.vector(playerDef.start[0], playerDef.start[1]);
   var pos = physics.pos(start);
 
@@ -11,30 +11,26 @@ function Player (playerDef) {
 
   this.maxPower = 3000;
 
-  this.movePower = 200;
+  this.movePowerBase = 100000;
+  this.movePower = this.movePowerBase;
+
+  this.densityBase = 1000;
 
   this.visible = playerLayer;
   this.physical = 
-    b.circle(radius/2, 1, pos, 4, 2);
+    b.circle(radius/2, this.densityBase, pos, 4, 2);
 }
 
 Player.prototype.applyForce = function(planet, distance, playerPos, planetPos) {
   var maxDist = planet.getGravityDistance();
+  var minDist = planet.physical.radius * 1.2;
   var distRatio = 0;
-  c.c("dist: " + distance + " maxDist: " + maxDist);
-  if (distance <= maxDist) {
+  if (distance <= maxDist && distance > minDist) {
     distRatio = maxDist / (maxDist + distance); 
-    c.c(" distRatio: " + distRatio);
-
     var ang = m.angle(planetPos,playerPos);
     var radiusWeight = planet.getGravityWeight();
     var intensity = this.maxPower * distRatio * radiusWeight;
-    c.c("ang: " + ang + " radW: " + radiusWeight + " int: " + intensity);
-    var dir = b.vector(intensity * Math.cos(ang),
-                       intensity * Math.sin(ang));
-    //c.d("angle: " + ang + " cPos: " + cPos + " pPos: " + pPos);
-    //c.d("dir.x: " + dir.x + " dir.y: " + dir.y);
-
+    var dir = m.point(b.vector(0,0), ang, intensity);
     this.physical.ApplyForce(dir, planetPos);
   }
 }
@@ -56,8 +52,6 @@ Player.prototype.moveDown = function () {
 }
 
 Player.prototype.move = function (dir) {
-  //this.physical.UnFreeze();
-  //this.physical.WakeUp();
   physics.frozen = false;
-  this.physical.SetLinearVelocity(dir);
+  this.physical.ApplyForce(dir);
 }

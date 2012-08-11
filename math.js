@@ -12,3 +12,8 @@ m.angle = function (a,b) {
   return Math.atan2(deltaY, deltaX);
 }
 
+m.point = function (pos, angle, dist) {
+  var x = pos.x + dist*Math.cos(angle);
+  var y = pos.y + dist*Math.sin(angle);
+  return b.vector(x,y);
+}
