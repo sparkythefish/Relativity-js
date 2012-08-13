@@ -18,6 +18,8 @@ function Planet (planetDef) {
   this.time = 0;
   this.zoom = false;
   this.zoomPos = pos;
+
+  this.physical.originalPos = b.vector(pos.x, pos.y);
 }
 
 Planet.prototype.getGravityDistance = function () {

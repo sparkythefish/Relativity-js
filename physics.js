@@ -39,13 +39,17 @@ physics.start = function() {
 
   var layer = new lime.Layer;
   layer.setPosition(0, 0);
+  var playerLayer = new lime.Layer;
+  playerLayer.setPosition(0,0);
   // TODO: this can kinda look cool
   //layer.setQuality(.1);
   //layer.setQuality(.7);
   gamescene.appendChild(layer);
+  gamescene.appendChild(playerLayer);
 
   physics.gamescene = gamescene;
   physics.planetLayer = layer;
+  physics.playerLayer = playerLayer;
 
   // set active scene
   physics.director.replaceScene(gamescene);

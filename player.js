@@ -2,11 +2,17 @@ goog.provide('player');
 
 function Player (playerDef) {
 
-  var radius = 2;
+  var physicalRadius = 2;
   var start = b.vector(playerDef.start[0], playerDef.start[1]);
   var pos = physics.pos(start);
 
-  var playerLayer = l.circle(radius);
+  this.haloRadius = 50;
+  this.initialRadius = 50;
+  this.initialScale = physicalRadius / this.initialRadius;
+  var playerLayer = l.circle(this.initialRadius);
+  playerLayer.setScale(1/25);
+  var haloLayer = l.circle(this.haloRadius);
+  physics.planetLayer.appendChild(haloLayer);
   physics.planetLayer.appendChild(playerLayer);
 
   this.maxPower = 3000;
@@ -17,8 +23,10 @@ function Player (playerDef) {
   this.densityBase = 1000;
 
   this.visible = playerLayer;
+  this.halo = haloLayer;
+
   this.physical = 
-    b.circle(radius/2, this.densityBase, pos, 4, 2);
+    b.circle(physicalRadius/2, this.densityBase, pos, 4, 2);
 }
 
 Player.prototype.applyForce = function(planet, distance, playerPos, planetPos) {
@@ -54,4 +62,16 @@ Player.prototype.moveDown = function () {
 Player.prototype.move = function (dir) {
   physics.frozen = false;
   this.physical.ApplyForce(dir, b.vector(0,0));
+}
+
+Player.prototype.updateVisual = function (updatedPos, scale) { 
+
+  this.visible.setPosition(updatedPos);
+  this.halo.setPosition(updatedPos);
+  this.halo.setScale(1/scale);
+
+  var visibleCircleSize = this.visible.circle.getSize().width*scale * this.initialScale;
+  var ratio = 1 - (visibleCircleSize / this.haloRadius);
+  var alpha = Math.max(0, ratio);
+  this.halo.circle.setFill(100,100,100, alpha);
 }

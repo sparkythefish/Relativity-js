@@ -32,5 +32,7 @@ l.circle = function (radius) {
       .setSize(radius*expando, radius*expando);
   circleLayer.appendChild(limeCircleExpander);
 
+  circleLayer.circle = limeCircle;
+
   return circleLayer;
 }
