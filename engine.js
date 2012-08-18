@@ -48,14 +48,14 @@ Engine.prototype.tick = function (dt, player, level) {
   player.updateVisual(cPos, scale);
 
   // TODO: fiddle with this forever
-  //physics.world.Step(dt / 1000, 3);
   var timeShiftBase = 1000;
   var timeShift = (scale * 100);
   var playerScaleShift = Math.max(1, scale);
 
-  player.movePower = player.movePowerBase * scale;
-  player.physical.density = player.densityBase / scale;
+  player.movePower = player.movePowerBase * (scale / physics.SCALE);
+  player.physical.density = player.densityBase / (scale / physics.SCALE);
   
+//  physics.world.Step(dt / 1000, 3);
   physics.world.Step(dt / (timeShiftBase + timeShift), 1);
 }
 
@@ -91,7 +91,8 @@ Engine.prototype.updateCamera = function (sum, divisor, playerPos, closestDistan
   //c.d("avg fps:" + avgFps + " sum: " + sum + " divisor: " + divisor + " closestD: " + closestDistance + " cameraScale: " + cameraScale);
 
   var playerVelocity = player.physical.GetLinearVelocity();
-  if (Math.abs(playerVelocity.x) + Math.abs(playerVelocity.y) > 100) {
+  c.d("vel: " + playerVelocity);
+  if (Math.abs(playerVelocity.x) + Math.abs(playerVelocity.y) > 100 / physics.SCALE) {
     playerVelocity.scale(.8);
   }
 

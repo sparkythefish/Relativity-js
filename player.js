@@ -3,30 +3,31 @@ goog.provide('player');
 function Player (playerDef) {
 
   var physicalRadius = 2;
-  var start = b.vector(playerDef.start[0], playerDef.start[1]);
+  var start = b.vector(playerDef.start[0] / physics.SCALE, 
+                       playerDef.start[1] / physics.SCALE);
   var pos = physics.pos(start);
 
   this.haloRadius = 50;
   this.initialRadius = 50;
   this.initialScale = physicalRadius / this.initialRadius;
   var playerLayer = l.circle(this.initialRadius);
-  playerLayer.setScale(1/25);
+  playerLayer.setScale(1/(25 * physics.SCALE));
   var haloLayer = l.circle(this.haloRadius);
   physics.planetLayer.appendChild(haloLayer);
   physics.planetLayer.appendChild(playerLayer);
 
   this.maxPower = 3000;
 
-  this.movePowerBase = 100000;
+  this.movePowerBase = 100000 / physics.SCALE;
   this.movePower = this.movePowerBase;
 
-  this.densityBase = 1000;
+  this.densityBase = 1000 * physics.SCALE * physics.SCALE;
 
   this.visible = playerLayer;
   this.halo = haloLayer;
 
   this.physical = 
-    b.circle(physicalRadius/2, this.densityBase, pos, 4, 2);
+    b.circle((physicalRadius/2)/physics.SCALE, this.densityBase, pos, 4, 2);
 }
 
 Player.prototype.applyForce = function(planet, distance, playerPos, planetPos) {

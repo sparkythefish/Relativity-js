@@ -29,6 +29,7 @@ physics.start = function() {
   physics.WIDTH = window.innerWidth; 
   physics.HEIGHT = window.innerHeight; 
   physics.CENTER = b.vector(physics.WIDTH/2, physics.HEIGHT/2); 
+  physics.SCALE = 1;
 
   //director
   //physics.director = new lime.Director(physicsDOM, physics.WIDTH, physics.HEIGHT);
@@ -112,8 +113,8 @@ physics.start = function() {
 };
 
 physics.pos = function (position) {
-  var x = physics.CENTER.x + position.x;
-  var y = physics.CENTER.y + position.y;
+  var x = (physics.CENTER.x * physics.SCALE) + position.x;
+  var y = (physics.CENTER.y * physics.SCALE) + position.y;
   return b.vector(x,y);
 };
 
