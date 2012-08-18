@@ -14,8 +14,6 @@ Engine.prototype.tick = function (dt, player, level) {
   var sum = b.vector(cPos.x, cPos.y);
   var divisor = 1; // 1 for the initial player position
   var closestDistance = -1;
-  var closestPos = b.vector(0,0);
-  var zoom = false;
 
   for (x in level.planets) {
     var planet = level.planets[x];
@@ -30,19 +28,17 @@ Engine.prototype.tick = function (dt, player, level) {
 
     planet.visible.setPosition(pPos);
 
-    if (!zoom && planet.zoom) {
-      zoom = true;
+    if (planet.zoom) {
       c.c("pPos: " + pPos + " planet.zoomPos: " + planet.zoomPos);
       distance = m.dist(cPos, planet.zoomPos);
     }
 
     if (distance < closestDistance || closestDistance == -1) {
       closestDistance = distance;
-      closestPos = pPos;
     }
   }
 
-  var camera = engine.updateCamera(sum, divisor, cPos, closestDistance, zoom, closestPos);
+  var camera = engine.updateCamera(sum, divisor, cPos, closestDistance);
 
   var scale = camera.scale;
   player.updateVisual(cPos, scale);
@@ -52,11 +48,11 @@ Engine.prototype.tick = function (dt, player, level) {
   var timeShift = (scale * 100);
   var playerScaleShift = Math.max(1, scale);
 
-  player.movePower = player.movePowerBase * (scale / physics.SCALE);
-  player.physical.density = player.densityBase / (scale / physics.SCALE);
+  //player.movePower = player.movePowerBase * (scale / physics.SCALE);
+  //player.physical.density = player.densityBase / (scale / physics.SCALE);
   
-//  physics.world.Step(dt / 1000, 3);
-  physics.world.Step(dt / (timeShiftBase + timeShift), 1);
+  physics.world.Step(dt / 1000, 3);
+  //physics.world.Step(dt / (timeShiftBase + timeShift), 1);
 }
 
 Engine.prototype.updateCamera = function (sum, divisor, playerPos, closestDistance, zoom, closestPos) {
@@ -75,7 +71,6 @@ Engine.prototype.updateCamera = function (sum, divisor, playerPos, closestDistan
     debug.avg = new Planet({'pos':[cameraAvg.x, cameraAvg.y], 'radius':10});
   }
   debug.avg.visible.setPosition(cameraAvg);
-  */
   
   var fps = physics.director.fps;
   if (!this.totalFps) {
@@ -86,6 +81,7 @@ Engine.prototype.updateCamera = function (sum, divisor, playerPos, closestDistan
   this.totalTicks++;
 
   var avgFps = this.totalFps / this.totalTicks;
+  */
 
   var cameraScale = (physics.CENTER.y * 1.1) / (closestDistance); 
   //c.d("avg fps:" + avgFps + " sum: " + sum + " divisor: " + divisor + " closestD: " + closestDistance + " cameraScale: " + cameraScale);
