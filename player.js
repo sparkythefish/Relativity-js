@@ -21,8 +21,8 @@ function Player (playerDef) {
   this.movePowerBase = 100000 / physics.SCALE;
   this.movePower = this.movePowerBase;
 
-  //this.densityBase = 1000 * physics.SCALE * physics.SCALE;
-  this.densityBase = 100;
+  this.densityBase = 1000 * physics.SCALE * physics.SCALE;
+  //this.densityBase = 100;
 
   this.visible = playerLayer;
   this.halo = haloLayer;
@@ -63,7 +63,7 @@ Player.prototype.moveDown = function () {
 
 Player.prototype.move = function (dir) {
   physics.frozen = false;
-  this.physical.ApplyForce(dir, b.vector(0,0));
+  this.physical.ApplyForce(dir, this.physical.GetCenterPosition());
 }
 
 Player.prototype.updateVisual = function (updatedPos, scale) { 

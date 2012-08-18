@@ -29,7 +29,7 @@ physics.start = function() {
   physics.WIDTH = window.innerWidth; 
   physics.HEIGHT = window.innerHeight; 
   physics.CENTER = b.vector(physics.WIDTH/2, physics.HEIGHT/2); 
-  physics.SCALE = 1;
+  physics.SCALE = 10;
 
   //director
   //physics.director = new lime.Director(physicsDOM, physics.WIDTH, physics.HEIGHT);
