@@ -1,7 +1,5 @@
 goog.provide('engine');
 
-debug = {}
-
 function Engine() {
   this.totalFps = 0;
   this.totalTicks = 1;
@@ -29,7 +27,6 @@ Engine.prototype.tick = function (dt, player, level) {
     planet.visible.setPosition(pPos);
 
     if (planet.zoom) {
-      c.c("pPos: " + pPos + " planet.zoomPos: " + planet.zoomPos);
       distance = m.dist(cPos, planet.zoomPos);
     }
 
@@ -51,7 +48,7 @@ Engine.prototype.tick = function (dt, player, level) {
   //player.movePower = player.movePowerBase * (scale / physics.SCALE);
   //player.physical.density = player.densityBase / (scale / physics.SCALE);
   
-  physics.world.Step(dt / 1000, 3);
+  physics.world.Step(dt / 1000, 1);
   //physics.world.Step(dt / (timeShiftBase + timeShift), 1);
 }
 
@@ -61,47 +58,19 @@ Engine.prototype.updateCamera = function (sum, divisor, playerPos, closestDistan
   var tempCpy = b.vector(avgPlanet.x, avgPlanet.y).add(b.vector(playerPos.x, playerPos.y));
   var cameraAvg = tempCpy.scale(.5);
 
-  /* 
-  if (!debug.avgPlanet) {
-    debug.avgPlanet = new Planet({'pos':[avgPlanet.x, avgPlanet.y], 'radius':5});
-  }
-  debug.avgPlanet.visible.setPosition(avgPlanet);
-
-  if (!debug.avg) {
-    debug.avg = new Planet({'pos':[cameraAvg.x, cameraAvg.y], 'radius':10});
-  }
-  debug.avg.visible.setPosition(cameraAvg);
-  
-  var fps = physics.director.fps;
-  if (!this.totalFps) {
-    this.totalFps = fps;
-  } else {
-    this.totalFps += fps; 
-  }
-  this.totalTicks++;
-
-  var avgFps = this.totalFps / this.totalTicks;
-  */
-
   var cameraScale = (physics.CENTER.y * 1.1) / (closestDistance); 
-  //c.d("avg fps:" + avgFps + " sum: " + sum + " divisor: " + divisor + " closestD: " + closestDistance + " cameraScale: " + cameraScale);
 
   var playerVelocity = player.physical.GetLinearVelocity();
-  c.d("vel: " + playerVelocity);
   if (Math.abs(playerVelocity.x) + Math.abs(playerVelocity.y) > 100 / physics.SCALE) {
     playerVelocity.scale(.8);
   }
 
-  physics.planetLayer.setScale(cameraScale);
-
-  var prevLayerPos = physics.planetLayer.getPosition();
   var cameraPoint = cameraAvg;
   var cameraPosition = b.vector(-((cameraPoint.x * cameraScale) - (physics.CENTER.x)), 
                                 -((cameraPoint.y * cameraScale) - (physics.CENTER.y)));
   
+  physics.planetLayer.setScale(cameraScale);
   physics.planetLayer.setPosition(cameraPosition);
-  //physics.playerLayer.setPosition(cameraPosition);
-  //physics.playerLayer.setScale(cameraScale);
 
   var camera = {}
   camera.scale = cameraScale;

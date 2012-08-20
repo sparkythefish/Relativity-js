@@ -16,12 +16,11 @@ goog.require('lime.CoverNode');
 goog.require('lime.Director');
 goog.require('lime.Layer');
 goog.require('lime.Scene');
+goog.require('lime.events.Event');
 goog.require('lime.fill.LinearGradient');
 goog.require('lime.animation.ScaleTo');
 
 goog.require('goog.events.KeyCodes');
-
-//goog.require('levels');
 
 physics.start = function() {
 
@@ -29,10 +28,8 @@ physics.start = function() {
   physics.WIDTH = window.innerWidth; 
   physics.HEIGHT = window.innerHeight; 
   physics.CENTER = b.vector(physics.WIDTH/2, physics.HEIGHT/2); 
-  physics.SCALE = 10;
+  physics.SCALE = 1;
 
-  //director
-  //physics.director = new lime.Director(physicsDOM, physics.WIDTH, physics.HEIGHT);
   physics.director = new lime.Director(document.body); 
   physics.director.makeMobileWebAppCapable();
 
@@ -40,6 +37,7 @@ physics.start = function() {
 
   var layer = new lime.Layer;
   layer.setPosition(0, 0);
+  layer.setRenderer(lime.Renderer.DOM);
   var playerLayer = new lime.Layer;
   playerLayer.setPosition(0,0);
   // TODO: this can kinda look cool
@@ -69,8 +67,8 @@ physics.start = function() {
   level = new Level(levels.level01);
   player = new Player(level.player); 
   engine = new Engine();
-  
-  physics.frozen = false;
+
+  //lime.scheduleManager.setDisplayRate(1000/60);
 
   lime.scheduleManager.schedule(function(dt) {
     if (!physics.frozen) {
@@ -95,27 +93,45 @@ physics.start = function() {
     }
   },this);
 
-  goog.events.listen(document, ['keydown'], function(e) { 
-    if (e.keyCode == goog.events.KeyCodes.LEFT) { 
-      player.moveLeft(); 
-    } 
-    if (e.keyCode == goog.events.KeyCodes.UP) { 
-      player.moveUp(); 
-    } 
-    if (e.keyCode == goog.events.KeyCodes.RIGHT) { 
-      player.moveRight(); 
-    } 
-    if (e.keyCode == goog.events.KeyCodes.DOWN) { 
-      player.moveDown(); 
-    } 
-  }); 
+  goog.events.listen(document,['mousedown','touchstart'],function(e){
+    var eventPos = physics.getEventPosition(event);
+    
+    player.move(eventPos.scale(10));
+    if (!this.mouseCircle) {
+      this.mouseCircle = l.circle(20);
+      physics.planetLayer.appendChild(this.mouseCircle);
+    }
+    this.mouseCircle.setPosition(eventPos);
+  });
 
 };
+
+physics.getEventPosition = function (e) {
+  var pos = b.vector(0,0);
+  if (e.touches) {
+    var touch = e.touches[0];
+    pos.x = touch.pageX;
+    pos.y = touch.pageY;
+  } else {
+    pos.x = e.screenX;
+    pos.y = e.screenY;
+  }
+
+  var mousePos = physics.convertMousePos(pos);
+  return mousePos;
+}
+
 
 physics.pos = function (position) {
   var x = (physics.CENTER.x * physics.SCALE) + position.x;
   var y = (physics.CENTER.y * physics.SCALE) + position.y;
   return b.vector(x,y);
 };
+
+physics.convertMousePos = function (pos) {
+  var x = pos.x - physics.CENTER.x;
+  var y = pos.y - physics.CENTER.y;
+  return b.vector(x,y);
+}
 
 goog.exportSymbol('physics.start', physics.start);

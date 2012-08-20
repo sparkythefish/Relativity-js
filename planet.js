@@ -53,17 +53,13 @@ Planet.prototype.getCameraPosition = function (distance, playerPos) {
     if (this.time < 10) {
       // TODO: Forever fiddle with this
       this.time += 0.01;
-      this.time *= 1.2;
+      this.time *= 1.08;
       // this one works OK:
       //this.time += 0.08;
     }
   } else if (this.time > 0) {
-    this.time *= 0.95; // easing number, how fast we remove the old planet
+    this.time *= 0.96; // easing number, how fast we remove the old planet
     //this.time -= 0.1; // rounding to be < 0 is a small decimal to, else divide forever.
-  }
-
-  if (this.zoom) {
-    //c.c(dbg + " 2: " + pPos + " time: " + this.time);
   }
 
   var cameraPos;

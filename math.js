@@ -17,3 +17,8 @@ m.point = function (pos, angle, dist) {
   var y = pos.y + dist*Math.sin(angle);
   return b.vector(x,y);
 }
+
+m.trunc = function (num, dec) {
+  var result = Math.round(num*Math.pow(10,dec))/Math.pow(10,dec);
+  return result;
+}

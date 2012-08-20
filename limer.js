@@ -19,11 +19,10 @@ goog.provide('l');
  * Ends up looking pretty smooth.
  */
 l.circle = function (radius) {
-  //radius = radius * physics.SCALE;
   var circleLayer = new lime.Layer;
   var limeCircle = (new lime.Circle)
       .setStroke(new lime.fill.Stroke(0,0,0,1))
-      .setFill(100,100,100,.5)
+      .setFill(200,100,100,.5)
       .setSize(radius, radius);
   circleLayer.appendChild(limeCircle);
   circleLayer.setScale(1/physics.SCALE);
