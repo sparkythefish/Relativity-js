@@ -94,16 +94,21 @@ physics.start = function() {
   },this);
 
   goog.events.listen(document,['mousedown','touchstart'],function(e){
-    var eventPos = physics.getEventPosition(event);
-    
-    player.move(eventPos.scale(10));
-    if (!this.mouseCircle) {
-      this.mouseCircle = l.circle(20);
-      physics.planetLayer.appendChild(this.mouseCircle);
-    }
-    this.mouseCircle.setPosition(eventPos);
+    var eventPos = physics.getEventRelativePlayer(event, player);
+    player.dragPos = eventPos;
+    player.impulse(eventPos.scale(.5/physics.SCALE));
   });
 
+  goog.events.listen(document,['mousemove','touchmove'],function(e){
+    var eventPos = physics.getEventRelativePlayer(event, player);
+    if (player.dragPos) {
+      player.dragPos = eventPos;
+    }
+  });
+
+  goog.events.listen(document,['mouseup','touchend'],function(e){
+    player.dragPos = false;
+  });
 };
 
 physics.getEventPosition = function (e) {
@@ -113,11 +118,15 @@ physics.getEventPosition = function (e) {
     pos.x = touch.pageX;
     pos.y = touch.pageY;
   } else {
-    pos.x = e.screenX;
-    pos.y = e.screenY;
+    pos.x = e.pageX;
+    pos.y = e.pageY;
   }
+  return pos;
+}
 
-  var mousePos = physics.convertMousePos(pos);
+physics.getEventRelativePlayer = function (e, player) {
+  var eventPos = this.getEventPosition(e)
+  var mousePos = physics.convertMousePos(eventPos, player);
   return mousePos;
 }
 
@@ -128,10 +137,13 @@ physics.pos = function (position) {
   return b.vector(x,y);
 };
 
-physics.convertMousePos = function (pos) {
-  var x = pos.x - physics.CENTER.x;
-  var y = pos.y - physics.CENTER.y;
-  return b.vector(x,y);
+physics.convertMousePos = function (pos, player) {
+  var physPos = player.physical.GetCenterPosition().clone();
+  var localPos = physics.planetLayer.localToScreen(physPos);
+  var x = pos.x - localPos.x;
+  var y = pos.y - localPos.y;
+  var mousePos = b.vector(x,y);
+  return mousePos;
 }
 
 goog.exportSymbol('physics.start', physics.start);

@@ -27,6 +27,8 @@ l.circle = function (radius) {
   circleLayer.appendChild(limeCircle);
   circleLayer.setScale(1/physics.SCALE);
 
+  //limeCircle.setRenderer(lime.Renderer.CANVAS);
+
   var expando = 1.5;
 
   var limeCircleExpander = (new lime.Circle)
@@ -36,4 +38,14 @@ l.circle = function (radius) {
   circleLayer.circle = limeCircle;
 
   return circleLayer;
+}
+
+l.qCircle = function (initCircle, color, radius, layer, pos) {
+  if (!initCircle) {
+    initCircle = l.circle(radius);
+    initCircle.circle.setFill(color[0], color[1], color[2]);
+    layer.appendChild(initCircle)
+  } 
+  initCircle.setPosition(pos.x, pos.y);
+  return initCircle;
 }

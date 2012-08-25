@@ -47,8 +47,14 @@ Engine.prototype.tick = function (dt, player, level) {
 
   //player.movePower = player.movePowerBase * (scale / physics.SCALE);
   //player.physical.density = player.densityBase / (scale / physics.SCALE);
+
+  player.tick(scale); 
+
+  var shift = 300 + Math.sqrt(scale) * 50;
+  //c.d("scale: " + scale + " shift: " + shift + " velocityLength: " + velocityLength + " playerVelocity: " + playerVelocity);
+  //c.d("scale: " + scale + " shift: " + shift); 
   
-  physics.world.Step(dt / 1000, 1);
+  physics.world.Step(dt / shift, 1);
   //physics.world.Step(dt / (timeShiftBase + timeShift), 1);
 }
 
@@ -59,11 +65,6 @@ Engine.prototype.updateCamera = function (sum, divisor, playerPos, closestDistan
   var cameraAvg = tempCpy.scale(.5);
 
   var cameraScale = (physics.CENTER.y * 1.1) / (closestDistance); 
-
-  var playerVelocity = player.physical.GetLinearVelocity();
-  if (Math.abs(playerVelocity.x) + Math.abs(playerVelocity.y) > 100 / physics.SCALE) {
-    playerVelocity.scale(.8);
-  }
 
   var cameraPoint = cameraAvg;
   var cameraPosition = b.vector(-((cameraPoint.x * cameraScale) - (physics.CENTER.x)), 
