@@ -20,7 +20,7 @@ levels.level02 =
   {
     "height":1000,
     "width":1000,
-    "player": { "start":[-50, -75] },
+    "player": { "start":[-300, -75] },
     "planets":
       [
         {"pos":[0,0], "radius":75} 

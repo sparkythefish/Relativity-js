@@ -16,19 +16,16 @@ function Player (playerDef) {
   var haloLayer = l.circle(this.haloRadius);
   haloLayer.circle.setStroke(new lime.fill.Stroke(2, new lime.fill.Color([200,0,0,.4])))
   haloLayer.circle.setFill(0,0,0,0);      
+  haloLayer.setScale(1);
 
   physics.playerLayer.appendChild(haloLayer);
   physics.playerLayer.appendChild(playerLayer);
 
   this.maxPower = 3;
 
-  this.movePowerBase = 100 / physics.SCALE;
-  this.movePower = this.movePowerBase;
-
-  var densityMultiplier = physicalRadius < 1 ? 1/Math.exp(physicalRadius,100) : 2/physicalRadius;
-
-  this.densityBase = densityMultiplier * physics.SCALE * physics.SCALE * physics.SCALE;
-  this.densityBase = 1000;
+  //this.densityBase = densityMultiplier * physics.SCALE * physics.SCALE * physics.SCALE;
+  //this.densityBase = 1000;
+  this.densityBase = 1000 * physics.SCALE * physics.SCALE;
 
   this.visible = playerLayer;
   this.halo = haloLayer.circle;
@@ -40,8 +37,9 @@ function Player (playerDef) {
   this.debug = {"debug":true};
 
   this.origin = b.vector(0,0);
-  this.maxVelocity = 10;
-  this.fudgeVelocity = this.maxVelocity + 2;
+  this.maxVelocity = 14 / Math.sqrt(physics.SCALE);
+  this.fudgeVelocity = this.maxVelocity + .2;
+  this.forceScale = 50;// / Math.sqrt(physics.SCALE);
 }
 
 Player.prototype.applyForce = function(planet, distance, playerPos, planetPos) {
@@ -51,14 +49,19 @@ Player.prototype.applyForce = function(planet, distance, playerPos, planetPos) {
   if (distance <= maxDist && distance > minDist) {
     distRatio = maxDist / (maxDist + distance); 
     var ang = m.angle(planetPos,playerPos);
-    var radiusWeight = planet.getGravityWeight();
+    var radiusWeight = planet.gravityWeight;
     var intensity = this.maxPower * distRatio * radiusWeight;
-    var dir = m.point(b.vector(0,0), ang, intensity);
+    var dir = m.point(b.vector(0,0), ang, intensity / physics.SCALE);
     this.physical.ApplyForce(dir, planetPos);
   }
 }
 
-Player.prototype.impulse = function (dir) {
+Player.prototype.impulse = function () {
+  var dir = player.getDirectionalVelocity(this.scale); 
+  dir.scale(this.forceScale / Math.sqrt(this.scale));
+  if (this.debug.debug) {
+    //this.debug.impulseCircle = l.qCircle(this.debug.impulseCircle, [0,256,256], 5, physics.playerLayer, dir);
+  }
   this.physical.ApplyImpulse(dir, this.physical.GetCenterPosition());
 }
 
@@ -85,24 +88,33 @@ Player.prototype.updateVisual = function (updatedPos, scale) {
 }
 
 Player.prototype.tick = function (scale) {
+  this.scale = scale;
   if (this.dragPos) {
-    var playerVelocity = player.physical.GetLinearVelocity();
-    var velocityLength = m.dist(this.origin, playerVelocity);
-
-    var playerAngle = m.angle(playerVelocity, this.origin); 
-    var normalVelocity = m.point(this.origin, playerAngle, Math.min(this.maxVelocity, velocityLength));
-
-    var touchAngle = m.angle(this.dragPos, this.origin);
-    var touchVelocity = m.point(this.origin, touchAngle, this.fudgeVelocity);
-
-    var forceVelocity = touchVelocity.clone().subtract(normalVelocity).scale(50 / Math.sqrt(scale));
-
+    var forceVelocity = this.getDirectionalVelocity(scale).scale(this.forceScale / Math.sqrt(scale));
     if (this.debug.debug) {
-      this.debug.touchCircle = l.qCircle(this.debug.touchCircle, [245,0,0], 5, physics.playerLayer, touchVelocity);
-      this.debug.currentCircle = l.qCircle(this.debug.currentCircle, [0,0,256], 5, physics.playerLayer, normalVelocity);
       this.debug.forceCircle = l.qCircle(this.debug.forceCircle, [0,256,0], 5, physics.playerLayer, forceVelocity);
     }
-
     this.force(forceVelocity);
   }
+}
+
+Player.prototype.getDirectionalVelocity = function scale() {
+  var playerVelocity = player.physical.GetLinearVelocity();
+  var velocityLength = m.dist(this.origin, playerVelocity);
+  c.d("SCALE: " + physics.SCALE + " velocityLength: " + velocityLength);
+
+  var playerAngle = m.angle(playerVelocity, this.origin); 
+  var normalVelocity = m.point(this.origin, playerAngle, Math.min(this.maxVelocity, velocityLength));
+
+  var touchAngle = m.angle(this.dragPos, this.origin);
+  var touchVelocity = m.point(this.origin, touchAngle, this.fudgeVelocity);
+
+  var diffVelocity = touchVelocity.clone().subtract(normalVelocity);
+
+  if (this.debug.debug) {
+    this.debug.touchCircle = l.qCircle(this.debug.touchCircle, [245,0,0], 5, physics.playerLayer, touchVelocity);
+    this.debug.currentCircle = l.qCircle(this.debug.currentCircle, [0,0,256], 5, physics.playerLayer, normalVelocity);
+  }
+
+  return diffVelocity;
 }

@@ -64,7 +64,7 @@ Engine.prototype.updateCamera = function (sum, divisor, playerPos, closestDistan
   var tempCpy = b.vector(avgPlanet.x, avgPlanet.y).add(b.vector(playerPos.x, playerPos.y));
   var cameraAvg = tempCpy.scale(.5);
 
-  var cameraScale = (physics.CENTER.y * 1.1) / (closestDistance); 
+  var cameraScale = (physics.CENTER.y * 1) / (closestDistance); 
 
   var cameraPoint = cameraAvg;
   var cameraPosition = b.vector(-((cameraPoint.x * cameraScale) - (physics.CENTER.x)), 

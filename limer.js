@@ -44,6 +44,7 @@ l.qCircle = function (initCircle, color, radius, layer, pos) {
   if (!initCircle) {
     initCircle = l.circle(radius);
     initCircle.circle.setFill(color[0], color[1], color[2]);
+    initCircle.setScale(1);
     layer.appendChild(initCircle)
   } 
   initCircle.setPosition(pos.x, pos.y);

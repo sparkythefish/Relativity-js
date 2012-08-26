@@ -96,7 +96,8 @@ physics.start = function() {
   goog.events.listen(document,['mousedown','touchstart'],function(e){
     var eventPos = physics.getEventRelativePlayer(event, player);
     player.dragPos = eventPos;
-    player.impulse(eventPos.scale(.5/physics.SCALE));
+    //player.impulse(eventPos.scale(.5/physics.SCALE));
+    player.impulse();
   });
 
   goog.events.listen(document,['mousemove','touchmove'],function(e){

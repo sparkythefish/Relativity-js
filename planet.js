@@ -1,18 +1,19 @@
 goog.provide("planet");
 
 function Planet (planetDef) {
-  var size = (planetDef.radius * 2);
+  var size = planetDef.radius;
   var posVec = b.vector(planetDef.pos[0] / physics.SCALE, 
                         planetDef.pos[1] / physics.SCALE)
   var pos = physics.pos(posVec);
 
-  var visualLayer = l.circle(size);
+  var visualLayer = l.circle(size * 2);
   visualLayer.setPosition(pos); 
   physics.planetLayer.appendChild(visualLayer);
   this.visible = visualLayer;
+  this.visible.circle.setStroke(new lime.fill.Stroke(.5, [0,0,256]));
 
   this.physical =
-    b.circle((size/2)/physics.SCALE, 0, pos, 2, 4);
+    b.circle(size/physics.SCALE, 0, pos, 2, 4);
 
   this._gravityDistance = 0;
   this._gravityWeight = 0;
@@ -21,6 +22,8 @@ function Planet (planetDef) {
   this.zoomPos = pos;
 
   this.physical.originalPos = b.vector(pos.x, pos.y);
+
+  this.gravityWeight = size * size * 0.01;
 }
 
 Planet.prototype.getGravityDistance = function () {
@@ -30,12 +33,12 @@ Planet.prototype.getGravityDistance = function () {
   return this._gravityDistance;
 };
 
-Planet.prototype.getGravityWeight = function () {
-  if (this._gravityWeight == 0) {
-    this._gravityWeight = (this.physical.radius * this.physical.radius) * .01;
-  }
-  return this._gravityWeight;
-}
+//Planet.prototype.getGravityWeight = function () {
+//  if (this._gravityWeight == 0) {
+//    this._gravityWeight = (this.physical.radius * this.physical.radius) * .01;
+//  }
+//  return this._gravityWeight;
+//}
 
 Planet.prototype.getCameraPosition = function (distance, playerPos) {
 
