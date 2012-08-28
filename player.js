@@ -6,6 +6,7 @@ function Player (playerDef) {
   var start = b.vector(playerDef.start[0] / physics.SCALE, 
                        playerDef.start[1] / physics.SCALE);
   var pos = physics.pos(start);
+  this.prevPos = pos;
 
   this.haloRadius = 50;
   this.initialRadius = 50;
@@ -37,8 +38,8 @@ function Player (playerDef) {
   this.debug = {"debug":true};
 
   this.origin = b.vector(0,0);
-  this.maxVelocity = 14 / Math.sqrt(physics.SCALE);
-  this.fudgeVelocity = this.maxVelocity + .2;
+  this.maxVelocity = 20 / Math.sqrt(physics.SCALE);
+  this.fudgeVelocity = this.maxVelocity + 1;
   this.forceScale = 50;// / Math.sqrt(physics.SCALE);
 }
 
@@ -101,7 +102,7 @@ Player.prototype.tick = function (scale) {
 Player.prototype.getDirectionalVelocity = function scale() {
   var playerVelocity = player.physical.GetLinearVelocity();
   var velocityLength = m.dist(this.origin, playerVelocity);
-  c.d("SCALE: " + physics.SCALE + " velocityLength: " + velocityLength);
+  //c.d("SCALE: " + physics.SCALE + " velocityLength: " + velocityLength);
 
   var playerAngle = m.angle(playerVelocity, this.origin); 
   var normalVelocity = m.point(this.origin, playerAngle, Math.min(this.maxVelocity, velocityLength));
@@ -117,4 +118,17 @@ Player.prototype.getDirectionalVelocity = function scale() {
   }
 
   return diffVelocity;
+}
+
+Player.prototype.stitch = function (stitchVect) {
+
+  c.d("player frozen? " + this.physical.IsFrozen());
+
+  this.physical.GetCenterPosition().x = 0;
+  this.physical.GetCenterPosition().y = 0;
+//  this.physical.SetCenterPosition(b.vector(0,0));
+
+  //c.d("player pos: " + this.physical.GetCenterPosition());
+
+  //c.d("before: " + velocity + " after: " + after + " stitch: " + stitchVect);
 }

@@ -59,8 +59,11 @@ physics.start = function() {
   var gravity = b.vector(0, 0);
   var bounds = new box2d.AABB();
   var boundSize = 10;
-  bounds.minVertex.Set(-boundSize*physics.WIDTH, -boundSize*physics.HEIGHT);
-  bounds.maxVertex.Set(2*boundSize*physics.WIDTH, 2*boundSize*physics.HEIGHT);
+  //bounds.minVertex.Set(-boundSize*physics.WIDTH, -boundSize*physics.HEIGHT);
+  //bounds.maxVertex.Set(2*boundSize*physics.WIDTH, 2*boundSize*physics.HEIGHT);
+  var staticSize = 10000;
+  bounds.minVertex.Set(-staticSize, -staticSize);
+  bounds.maxVertex.Set(2*staticSize,2*staticSize);
   var world = new box2d.World(bounds, gravity, false);
   physics.world = world;
 

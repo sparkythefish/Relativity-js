@@ -4,7 +4,7 @@ levels.level01 =
   {
     "height":1000,
     "width":1000,
-    "player": { "start":[600,-100] },
+    "player": { "start":[0,0] },
     "planets":
       [
         {"pos":[700,0], "radius":75}, 
@@ -20,9 +20,9 @@ levels.level02 =
   {
     "height":1000,
     "width":1000,
-    "player": { "start":[-300, -75] },
+    "player": { "start":[0, 0] },
     "planets":
       [
-        {"pos":[0,0], "radius":75} 
+        {"pos":[300,100], "radius":75} 
       ]
   }

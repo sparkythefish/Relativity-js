@@ -3,6 +3,7 @@ goog.provide('engine');
 function Engine() {
   this.totalFps = 0;
   this.totalTicks = 1;
+  this.closeIsh = false;
 }
 
 Engine.prototype.tick = function (dt, player, level) {
@@ -12,6 +13,20 @@ Engine.prototype.tick = function (dt, player, level) {
   var sum = b.vector(cPos.x, cPos.y);
   var divisor = 1; // 1 for the initial player position
   var closestDistance = -1;
+  var stitchVect;
+  if (!this.closeIsh) {
+    stitchVect = cPos.clone().subtract(player.prevPos);
+
+    c.d("stiching! prev: " + player.prevPos + " cur: " + cPos);
+    //stitchVect = player.physical.GetLinearVelocity().clone();
+    player.stitch(stitchVect);
+    player.prevPos = player.physical.GetCenterPosition().clone();
+    //cPos = player.physical.GetCenterPosition().clone();
+  } else {
+//    c.d("not stitching! cur: " + cPos);
+  }
+  
+  //this.closeIsh = false;
 
   for (x in level.planets) {
     var planet = level.planets[x];
@@ -33,11 +48,26 @@ Engine.prototype.tick = function (dt, player, level) {
     if (distance < closestDistance || closestDistance == -1) {
       closestDistance = distance;
     }
-  }
 
+    if (!this.closeIsh) {
+//      c.d("stitching: " + stitchVect + " closest: " + closestDistance + " planet: " + planet.physical.GetCenterPosition());
+      planet.stitch(stitchVect);
+    } else {
+      c.d("not stitching! planet: " + planet.physical.GetCenterPosition() + " player: " + player.physical.GetCenterPosition() + " closest: " + closestDistance + " planet rad: " + planet.physical.radius);
+    }
+    if (this.scale && 
+          distance <= planet.physical.radius + player.physical.radius) {
+      c.l("Collide!!!!");
+    //  player.physical.SetLinearVelocity(b.vector(0,0));
+    }
+  }
+  
+  this.closeIsh = divisor > 1;
+  
   var camera = engine.updateCamera(sum, divisor, cPos, closestDistance);
 
   var scale = camera.scale;
+  this.scale = scale;
   player.updateVisual(cPos, scale);
 
   // TODO: fiddle with this forever
@@ -58,17 +88,15 @@ Engine.prototype.tick = function (dt, player, level) {
   //physics.world.Step(dt / (timeShiftBase + timeShift), 1);
 }
 
-Engine.prototype.updateCamera = function (sum, divisor, playerPos, closestDistance, zoom, closestPos) {
+Engine.prototype.updateCamera = function (sum, divisor, playerPos, closestDistance) {
   var avgPlanet = sum.scale(1/(divisor));
   // TODO: this is good for debugging, but can be eliminated for performance
   var tempCpy = b.vector(avgPlanet.x, avgPlanet.y).add(b.vector(playerPos.x, playerPos.y));
   var cameraAvg = tempCpy.scale(.5);
 
   var cameraScale = (physics.CENTER.y * 1) / (closestDistance); 
-
-  var cameraPoint = cameraAvg;
-  var cameraPosition = b.vector(-((cameraPoint.x * cameraScale) - (physics.CENTER.x)), 
-                                -((cameraPoint.y * cameraScale) - (physics.CENTER.y)));
+  var cameraPosition = b.vector(-((cameraAvg.x * cameraScale) - (physics.CENTER.x)), 
+                                -((cameraAvg.y * cameraScale) - (physics.CENTER.y)));
   
   physics.planetLayer.setScale(cameraScale);
   physics.planetLayer.setPosition(cameraPosition);

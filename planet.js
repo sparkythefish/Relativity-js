@@ -75,3 +75,9 @@ Planet.prototype.getCameraPosition = function (distance, playerPos) {
 
   return cameraPos;
 }
+
+Planet.prototype.stitch = function (stitchVect) {
+  var stitched = this.physical.GetCenterPosition().subtract(stitchVect);
+//  this.physical.SetCenterPosition(stitched);
+//  c.d("new pos: " + this.physical.GetCenterPosition() + " stitchVect: " + stitchVect + " frozen: " + this.physical.IsFrozen());
+}
