@@ -1,0 +1,8 @@
+Look at performance of movingthe planets
+  * Can they all be added as one body definition and moved at once?
+    * Like a layer?
+Look at the bug list
+Clean up code, always
+  * get rid of engine.js?
+  * rename / cleanup physics.js?
+Performance tuning 
