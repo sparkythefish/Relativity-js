@@ -25,7 +25,6 @@ l.circle = function (radius) {
       .setFill(200,100,100,.5)
       .setSize(radius, radius);
   circleLayer.appendChild(limeCircle);
-  circleLayer.setScale(1/physics.SCALE);
 
   //limeCircle.setRenderer(lime.Renderer.CANVAS);
 

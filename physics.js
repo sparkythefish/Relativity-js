@@ -28,7 +28,6 @@ physics.start = function() {
   physics.WIDTH = window.innerWidth; 
   physics.HEIGHT = window.innerHeight; 
   physics.CENTER = b.vector(physics.WIDTH/2, physics.HEIGHT/2); 
-  physics.SCALE = 1;
 
   physics.director = new lime.Director(document.body); 
   physics.director.makeMobileWebAppCapable();
@@ -99,7 +98,6 @@ physics.start = function() {
   goog.events.listen(document,['mousedown','touchstart'],function(e){
     var eventPos = physics.getEventRelativePlayer(event, player);
     player.dragPos = eventPos;
-    //player.impulse(eventPos.scale(.5/physics.SCALE));
     player.impulse();
   });
 
@@ -136,8 +134,8 @@ physics.getEventRelativePlayer = function (e, player) {
 
 
 physics.pos = function (position) {
-  var x = (physics.CENTER.x * physics.SCALE) + position.x;
-  var y = (physics.CENTER.y * physics.SCALE) + position.y;
+  var x = physics.CENTER.x + position.x;
+  var y = physics.CENTER.y + position.y;
   return b.vector(x,y);
 };
 

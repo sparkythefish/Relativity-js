@@ -2,8 +2,7 @@ goog.provide("planet");
 
 function Planet (planetDef) {
   var size = planetDef.radius;
-  var posVec = b.vector(planetDef.pos[0] / physics.SCALE, 
-                        planetDef.pos[1] / physics.SCALE)
+  var posVec = b.vector(planetDef.pos[0], planetDef.pos[1]);
   var pos = physics.pos(posVec);
 
   var visualLayer = l.circle(size * 2);
@@ -12,8 +11,7 @@ function Planet (planetDef) {
   this.visible = visualLayer;
   this.visible.circle.setStroke(new lime.fill.Stroke(.5, [0,0,256]));
 
-  this.physical =
-    b.circle(size/physics.SCALE, 0, pos, 2, 4);
+  this.physical = b.circle(size, 0, pos, 2, 4);
 
   this._gravityDistance = 0;
   this._gravityWeight = 0;

@@ -75,8 +75,8 @@ Engine.prototype.tick = function (dt, player, level) {
   var timeShift = (scale * 100);
   var playerScaleShift = Math.max(1, scale);
 
-  //player.movePower = player.movePowerBase * (scale / physics.SCALE);
-  //player.physical.density = player.densityBase / (scale / physics.SCALE);
+  //player.movePower = player.movePowerBase * scale;
+  //player.physical.density = player.densityBase / scale;
 
   player.tick(scale); 
 

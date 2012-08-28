@@ -3,8 +3,7 @@ goog.provide('player');
 function Player (playerDef) {
 
   var physicalRadius = .25;
-  var start = b.vector(playerDef.start[0] / physics.SCALE, 
-                       playerDef.start[1] / physics.SCALE);
+  var start = b.vector(playerDef.start[0], playerDef.start[1]);
   var pos = physics.pos(start);
   this.prevPos = pos;
 
@@ -12,7 +11,7 @@ function Player (playerDef) {
   this.initialRadius = 50;
   this.initialScale = physicalRadius / this.initialRadius;
   var playerLayer = l.circle(this.initialRadius);
-  playerLayer.circle.setScale(1/((this.initialRadius / physicalRadius) * physics.SCALE));
+  playerLayer.circle.setScale(physicalRadius / this.initialRadius);
 
   var haloLayer = l.circle(this.haloRadius);
   haloLayer.circle.setStroke(new lime.fill.Stroke(2, new lime.fill.Color([200,0,0,.4])))
@@ -24,23 +23,20 @@ function Player (playerDef) {
 
   this.maxPower = 3;
 
-  //this.densityBase = densityMultiplier * physics.SCALE * physics.SCALE * physics.SCALE;
-  //this.densityBase = 1000;
-  this.densityBase = 1000 * physics.SCALE * physics.SCALE;
+  this.densityBase = 1000; 
 
   this.visible = playerLayer;
   this.halo = haloLayer.circle;
 
-  this.physical = 
-    b.circle((physicalRadius/2)/physics.SCALE, this.densityBase, pos, 4, 2);
+  this.physical = b.circle(physicalRadius/2, this.densityBase, pos, 4, 2);
 
   // togles showing the debug circles 
   this.debug = {"debug":true};
 
   this.origin = b.vector(0,0);
-  this.maxVelocity = 20 / Math.sqrt(physics.SCALE);
+  this.maxVelocity = 20; 
   this.fudgeVelocity = this.maxVelocity + 1;
-  this.forceScale = 50;// / Math.sqrt(physics.SCALE);
+  this.forceScale = 50;
 }
 
 Player.prototype.applyForce = function(planet, distance, playerPos, planetPos) {
@@ -52,7 +48,7 @@ Player.prototype.applyForce = function(planet, distance, playerPos, planetPos) {
     var ang = m.angle(planetPos,playerPos);
     var radiusWeight = planet.gravityWeight;
     var intensity = this.maxPower * distRatio * radiusWeight;
-    var dir = m.point(b.vector(0,0), ang, intensity / physics.SCALE);
+    var dir = m.point(b.vector(0,0), ang, intensity);
     this.physical.ApplyForce(dir, planetPos);
   }
 }
@@ -102,7 +98,6 @@ Player.prototype.tick = function (scale) {
 Player.prototype.getDirectionalVelocity = function scale() {
   var playerVelocity = player.physical.GetLinearVelocity();
   var velocityLength = m.dist(this.origin, playerVelocity);
-  //c.d("SCALE: " + physics.SCALE + " velocityLength: " + velocityLength);
 
   var playerAngle = m.angle(playerVelocity, this.origin); 
   var normalVelocity = m.point(this.origin, playerAngle, Math.min(this.maxVelocity, velocityLength));
