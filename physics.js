@@ -67,14 +67,11 @@ physics.start = function() {
   physics.world = world;
 
   level = new Level(levels.level01);
-//  player = new Player(level.player); 
-//  engine = new Engine();
 
   //lime.scheduleManager.setDisplayRate(1000/60);
 
   lime.scheduleManager.schedule(function(dt) {
     if (!physics.frozen) {
-  //    engine.tick(dt, player, level);
       level.tick(dt);
     }
     //if (physics.contactCount < physics.world.m_contactCount) {
