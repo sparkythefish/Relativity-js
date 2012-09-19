@@ -56,7 +56,7 @@ Player.prototype.applyForce = function(planet, distance, playerPos, planetPos) {
 }
 
 Player.prototype.impulse = function () {
-  var dir = player.getDirectionalVelocity(this.scale); 
+  var dir = this.getDirectionalVelocity(this.scale); 
   dir.scale(this.forceScale / Math.sqrt(this.scale));
   if (this.debug.debug) {
     //this.debug.impulseCircle = l.qCircle(this.debug.impulseCircle, [0,256,256], 5, physics.playerLayer, dir);
@@ -99,7 +99,7 @@ Player.prototype.tick = function (scale) {
 }
 
 Player.prototype.getDirectionalVelocity = function scale() {
-  var playerVelocity = player.physical.GetLinearVelocity();
+  var playerVelocity = this.physical.GetLinearVelocity();
   var velocityLength = m.dist(this.origin, playerVelocity);
 
   var playerAngle = m.angle(playerVelocity, this.origin); 

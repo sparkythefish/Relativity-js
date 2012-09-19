@@ -67,14 +67,15 @@ physics.start = function() {
   physics.world = world;
 
   level = new Level(levels.level01);
-  player = new Player(level.player); 
-  engine = new Engine();
+//  player = new Player(level.player); 
+//  engine = new Engine();
 
   //lime.scheduleManager.setDisplayRate(1000/60);
 
   lime.scheduleManager.schedule(function(dt) {
     if (!physics.frozen) {
-      engine.tick(dt, player, level);
+  //    engine.tick(dt, player, level);
+      level.tick(dt);
     }
     //if (physics.contactCount < physics.world.m_contactCount) {
     //  physics.contact = true;
@@ -96,20 +97,20 @@ physics.start = function() {
   },this);
 
   goog.events.listen(document,['mousedown','touchstart'],function(e){
-    var eventPos = physics.getEventRelativePlayer(event, player);
-    player.dragPos = eventPos;
-    player.impulse();
+    var eventPos = physics.getEventRelativePlayer(event, level.player);
+    level.player.dragPos = eventPos;
+    level.player.impulse();
   });
 
   goog.events.listen(document,['mousemove','touchmove'],function(e){
-    var eventPos = physics.getEventRelativePlayer(event, player);
-    if (player.dragPos) {
-      player.dragPos = eventPos;
+    var eventPos = physics.getEventRelativePlayer(event, level.player);
+    if (level.player.dragPos) {
+      level.player.dragPos = eventPos;
     }
   });
 
   goog.events.listen(document,['mouseup','touchend'],function(e){
-    player.dragPos = false;
+    level.player.dragPos = false;
   });
 };
 
