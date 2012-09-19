@@ -140,7 +140,7 @@ physics.pos = function (position) {
 };
 
 physics.convertMousePos = function (pos, player) {
-  var physPos = player.physical.GetCenterPosition().clone();
+  var physPos = player.currentPos().clone();
   var localPos = physics.planetLayer.localToScreen(physPos);
   var x = pos.x - localPos.x;
   var y = pos.y - localPos.y;

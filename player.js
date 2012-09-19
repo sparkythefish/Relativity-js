@@ -37,6 +37,8 @@ function Player (playerDef) {
   this.maxVelocity = 20; 
   this.fudgeVelocity = this.maxVelocity + 1;
   this.forceScale = 50;
+
+  this.totalStitchPos = b.vector(0,0);
 }
 
 Player.prototype.applyForce = function(planet, distance, playerPos, planetPos) {
@@ -49,7 +51,7 @@ Player.prototype.applyForce = function(planet, distance, playerPos, planetPos) {
     var radiusWeight = planet.gravityWeight;
     var intensity = this.maxPower * distRatio * radiusWeight;
     var dir = m.point(b.vector(0,0), ang, intensity);
-    this.physical.ApplyForce(dir, planetPos);
+    this.physical.ApplyForce(dir, this.physical.GetCenterPosition());
   }
 }
 
@@ -70,7 +72,7 @@ Player.prototype.updateVisual = function (updatedPos, scale) {
 
   this.visible.setScale(scale);
 
-  var physPos = this.physical.GetCenterPosition().clone();
+  var physPos = this.currentPos().clone();
   var localPos = physics.planetLayer.localToScreen(physPos);
   physics.playerLayer.setPosition(localPos);
 
@@ -85,6 +87,7 @@ Player.prototype.updateVisual = function (updatedPos, scale) {
 }
 
 Player.prototype.tick = function (scale) {
+//  c.d("player: pos: " + this.physical.GetCenterPosition() + " froyo: " + this.physical.IsFrozen());
   this.scale = scale;
   if (this.dragPos) {
     var forceVelocity = this.getDirectionalVelocity(scale).scale(this.forceScale / Math.sqrt(scale));
@@ -115,15 +118,16 @@ Player.prototype.getDirectionalVelocity = function scale() {
   return diffVelocity;
 }
 
-Player.prototype.stitch = function (stitchVect) {
-
-  c.d("player frozen? " + this.physical.IsFrozen());
-
-  this.physical.GetCenterPosition().x = 0;
-  this.physical.GetCenterPosition().y = 0;
-//  this.physical.SetCenterPosition(b.vector(0,0));
-
-  //c.d("player pos: " + this.physical.GetCenterPosition());
-
-  //c.d("before: " + velocity + " after: " + after + " stitch: " + stitchVect);
+Player.prototype.stitch = function () {
+  var cur = this.physical.GetCenterPosition().clone();
+  var stitch = cur.subtract(this.prevPos);
+  this.physical.SetCenterPosition(b.vector(0,0), 0)
+  this.totalStitchPos.add(stitch);
+  this.prevPos = this.physical.GetCenterPosition().clone();
+  return stitch;
 }
+
+Player.prototype.currentPos = function () {
+  return this.totalStitchPos.clone().add(this.physical.GetCenterPosition());
+}
+

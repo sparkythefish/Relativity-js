@@ -31,16 +31,8 @@ Planet.prototype.getGravityDistance = function () {
   return this._gravityDistance;
 };
 
-//Planet.prototype.getGravityWeight = function () {
-//  if (this._gravityWeight == 0) {
-//    this._gravityWeight = (this.physical.radius * this.physical.radius) * .01;
-//  }
-//  return this._gravityWeight;
-//}
-
 Planet.prototype.getCameraPosition = function (distance, playerPos) {
-
-  var pPos = this.physical.GetCenterPosition().clone(); 
+  var pPos = this.visible.getPosition().clone();
   this.zoom = false;
   var zoomDistanceThresh = this.physical.radius * 2;
   if (distance < zoomDistanceThresh) {
@@ -75,7 +67,6 @@ Planet.prototype.getCameraPosition = function (distance, playerPos) {
 }
 
 Planet.prototype.stitch = function (stitchVect) {
-  var stitched = this.physical.GetCenterPosition().subtract(stitchVect);
-//  this.physical.SetCenterPosition(stitched);
-//  c.d("new pos: " + this.physical.GetCenterPosition() + " stitchVect: " + stitchVect + " frozen: " + this.physical.IsFrozen());
+  var stitched = this.physical.GetCenterPosition().clone().subtract(stitchVect);
+  this.physical.SetCenterPosition(stitched, 0);
 }
