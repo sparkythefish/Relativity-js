@@ -52,7 +52,9 @@ Level.prototype.tick = function (dt) {
     } 
 
     if (distance > physics.WIDTH) {
-      planet.physical.Freeze();
+      if (!planet.physical.IsFrozen()) {
+        planet.physical.Freeze();
+      }
     } else if (planet.physical.IsFrozen()) {
       planet.addPhysical(planet.originalPos.subtract(planet.totalStitch));
     }
