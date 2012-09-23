@@ -23,12 +23,16 @@ Level.prototype.tick = function (dt) {
   if (!this.dynamicCamera) {
     stitchVect = this.player.stitch();
   } 
-  
+
+  c.debug.active = [];
 
   for (x in this.planets) {
     var planet = this.planets[x];
     var pPos = planet.visible.getPosition().clone(); 
     var distance = m.dist(cPos, pPos); 
+
+    var debugPlanet = {};
+
     this.player.applyForce(planet, distance, cPos, pPos);
     var cameraPos = planet.getCameraPosition(distance, cPos);
 
@@ -44,8 +48,19 @@ Level.prototype.tick = function (dt) {
     }
 
     if (!this.dynamicCamera) {
-      planet.stitch(stitchVect);
+      planet.stitch(this.player.totalStitchPos);
     } 
+
+    if (distance > physics.WIDTH) {
+      planet.physical.Freeze();
+    } else if (planet.physical.IsFrozen()) {
+      planet.addPhysical(planet.originalPos.subtract(planet.totalStitch));
+    }
+
+    debugPlanet.frozen = planet.physical.IsFrozen();
+    debugPlanet.pos = planet.physical.GetCenterPosition();
+
+    c.debug.active.push(debugPlanet);
   }
   
   var camera = this.updateCamera(sum, divisor, this.player.currentPos().clone(), closestDistance);

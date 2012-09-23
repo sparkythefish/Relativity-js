@@ -1,35 +1,33 @@
 goog.provide("planet");
 
 function Planet (planetDef) {
-  var size = planetDef.radius;
+  this.size = planetDef.radius;
   var posVec = b.vector(planetDef.pos[0], planetDef.pos[1]);
   var pos = physics.pos(posVec);
 
-  var visualLayer = l.circle(size * 2);
+  var visualLayer = l.circle(this.size * 2);
   visualLayer.setPosition(pos); 
   physics.planetLayer.appendChild(visualLayer);
   this.visible = visualLayer;
   this.visible.circle.setStroke(new lime.fill.Stroke(.5, [0,0,256]));
 
-  this.physical = b.circle(size, 0, pos, 2, 4);
+  this.addPhysical(pos);
 
-  this._gravityDistance = 0;
-  this._gravityWeight = 0;
   this.time = 0;
   this.zoom = false;
   this.zoomPos = pos;
 
-  this.physical.originalPos = b.vector(pos.x, pos.y);
+  this.originalPos = b.vector(pos.x, pos.y);
 
-  this.gravityWeight = size * size * 0.01;
+  this.gravityWeight = this.size * this.size * 0.01;
+  this.gravityDistance = this.physical.radius * 3;
+  this.active = true;
+  this.totalStitch = b.vector(0,0);
 }
 
-Planet.prototype.getGravityDistance = function () {
-  if (this._gravityDistance == 0) {
-    this._gravityDistance = this.physical.radius * 3;
-  }
-  return this._gravityDistance;
-};
+Planet.prototype.addPhysical = function (pos) {
+  this.physical = b.circle(this.size, 0, pos, 2, 4);
+}
 
 Planet.prototype.getCameraPosition = function (distance, playerPos) {
   var pPos = this.visible.getPosition().clone();
@@ -42,7 +40,7 @@ Planet.prototype.getCameraPosition = function (distance, playerPos) {
     this.zoomPos = b.vector(pPos.x, pPos.y);
   }
   
-  if (distance < this.getGravityDistance()) {
+  if (distance < this.gravityDistance) {
     if (this.time < 10) {
       // TODO: Forever fiddle with this
       this.time += 0.01;
@@ -67,6 +65,5 @@ Planet.prototype.getCameraPosition = function (distance, playerPos) {
 }
 
 Planet.prototype.stitch = function (stitchVect) {
-  var stitched = this.physical.GetCenterPosition().clone().subtract(stitchVect);
-  this.physical.SetCenterPosition(stitched, 0);
+  this.physical.SetCenterPosition(this.originalPos.clone().subtract(stitchVect), 0);
 }

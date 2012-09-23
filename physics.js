@@ -24,7 +24,6 @@ goog.require('goog.events.KeyCodes');
 
 physics.start = function() {
 
-  var physicsDOM = document.getElementById("physicsDOM");
   physics.WIDTH = window.innerWidth; 
   physics.HEIGHT = window.innerHeight; 
   physics.CENTER = b.vector(physics.WIDTH/2, physics.HEIGHT/2); 
@@ -74,12 +73,13 @@ physics.start = function() {
     if (!physics.frozen) {
       level.tick(dt);
     }
+
+    c.tick();
     //if (physics.contactCount < physics.world.m_contactCount) {
     //  physics.contact = true;
     //  //physics.frozen = true;
     //  //physics.contactCount = physics.world.m_contactCount;
     //  physics.contactCount++; 
-    //  c.l("contact!!");
     //} else {
     //  physics.contact = false;
     //}

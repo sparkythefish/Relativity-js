@@ -1,5 +1,9 @@
 goog.provide('c');
 
+c.display = document.getElementById('display');
+
+c.debug = {"debug":"yes!"}
+
 c.o = function (obj, prop) {
   console.log(prop + ": ");
   c.l(obj[prop]);
@@ -9,10 +13,15 @@ c.l = function (msg) {
   console.log(msg);
 };
 
-c.d = function (msg) {
-  var display = document.getElementById('display');
-  display.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + msg;
+c.d = function () {
 };
+
+c.tick = function () {
+  if (!c.display) {
+    c.display = document.getElementById('display');
+  }
+  c.display.innerHTML = '<pre>' + JSON.stringify(c.debug, undefined, 2) + '</pre>'; 
+}
 
 c.count = 50;
 

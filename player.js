@@ -42,7 +42,7 @@ function Player (playerDef) {
 }
 
 Player.prototype.applyForce = function(planet, distance, playerPos, planetPos) {
-  var maxDist = planet.getGravityDistance();
+  var maxDist = planet.gravityDistance;
   var minDist = planet.physical.radius * 1.2;
   var distRatio = 0;
   if (distance <= maxDist && distance > minDist) {
@@ -87,7 +87,6 @@ Player.prototype.updateVisual = function (updatedPos, scale) {
 }
 
 Player.prototype.tick = function (scale) {
-//  c.d("player: pos: " + this.physical.GetCenterPosition() + " froyo: " + this.physical.IsFrozen());
   this.scale = scale;
   if (this.dragPos) {
     var forceVelocity = this.getDirectionalVelocity(scale).scale(this.forceScale / Math.sqrt(scale));
